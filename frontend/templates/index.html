@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Autómatas Finitos — Transformación y Minimización</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<header>
+  <h1>Autómatas Finitos — AFND a AFD Mínimo</h1>
+  <p>
+    Flujo formal: AFND → AFD (subconjuntos) → AFD minimizado
+  </p>
+</header>
+
+<main>
+  <section class="landing-hero">
+    <h2>Que hace esta herramienta</h2>
+    <p>
+      Visualiza paso a paso como un automata no determinista se transforma en un determinista,
+      y luego se minimiza sin cambiar el lenguaje reconocido.
+    </p>
+    <div class="flow-chips">
+      <span class="flow-chip">1. AFND</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-chip">2. AFD (subconjuntos)</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-chip">3. AFD Minimo</span>
+    </div>
+  </section>
+
+  <section class="explicacion-grid">
+    <article class="card">
+      <div class="card-header">Transformacion AFND → AFD</div>
+      <div class="card-body">
+        <p class="landing-text">Cada estado del AFD representa un conjunto de estados del AFND.</p>
+        <ul class="landing-list">
+          <li>Partes del estado inicial del AFND.</li>
+          <li>Calculas transiciones por cada simbolo del alfabeto.</li>
+          <li>Generas nuevos estados-conjunto hasta cerrar el grafo.</li>
+          <li>Un estado-conjunto es final si contiene algun final del AFND.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-header">Minimizacion del AFD</div>
+      <div class="card-body">
+        <p class="landing-text">Se agrupan estados equivalentes para obtener el automata minimo equivalente.</p>
+        <ul class="landing-list">
+          <li>Separa estados finales y no finales.</li>
+          <li>Refina particiones segun sus transiciones.</li>
+          <li>Fusiona los estados indistinguibles.</li>
+          <li>Conserva el lenguaje y reduce complejidad.</li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="rutas-ejemplos">
+    <h2>Tres Ejemplos Disponibles</h2>
+    <p>Selecciona un ejemplo para ver tablas, diagramas y validacion animada.</p>
+
+    <div class="example-cards">
+      {% for ejemplo in ejemplos %}
+      <a class="example-link" href="{{ url_for(ejemplo.id) }}">
+        <div class="example-title">{{ ejemplo.nombre }}</div>
+        <div class="example-subtitle">{{ ejemplo.subtitulo }}</div>
+        <div class="example-language">Lenguaje: {{ ejemplo.lenguaje }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

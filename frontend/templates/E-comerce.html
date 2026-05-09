@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Autómatas {{ ejemplo.nombre if ejemplo else 'E-commerce Flujo' }} — AFND › AFD › AFD Mínimo</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>Autómatas Finitos — {{ ejemplo.nombre if ejemplo else 'E-commerce Flujo' }}</h1>
+  <p>
+    AFND → AFD (construccion de subconjuntos) → AFD Minimizado
+    &nbsp;|&nbsp;
+    Lenguaje: {{ ejemplo.lenguaje if ejemplo else 'H S C' }}
+  </p>
+</header>
+
+<main>
+  <section class="top-links">
+    <a href="{{ url_for('index') }}">Inicio</a>
+    <a href="{{ url_for('iot') }}">IoT</a>
+    <a href="{{ url_for('ids') }}">IDS</a>
+    <a href="{{ url_for('ecommerce') }}">E-commerce</a>
+  </section>
+
+  <section class="flow-explain">
+    <div class="flow-step">
+      <h3>AFND</h3>
+      <p>Modelo con posibles transiciones alternativas.</p>
+    </div>
+    <div class="flow-sep">→</div>
+    <div class="flow-step">
+      <h3>AFD</h3>
+      <p>Construccion por subconjuntos para volverlo determinista.</p>
+    </div>
+    <div class="flow-sep">→</div>
+    <div class="flow-step">
+      <h3>AFD Minimo</h3>
+      <p>Fusiones de estados equivalentes para reducir complejidad.</p>
+    </div>
+  </section>
+
+  <div class="validador">
+    <div>
+      <label for="cadena-input">Cadena de prueba (símbolos separados por coma)</label>
+      <input
+        id="cadena-input"
+        type="text"
+        placeholder="{{ ejemplo.placeholder if ejemplo else 'H, S, C' }}"
+        value="{{ ejemplo.placeholder if ejemplo else 'H, S, C' }}"
+      />
+    </div>
+    <button class="btn-validate" onclick="validarCadena()"><span>⚡ Validar cadena</span></button>
+    <span class="hint">
+      Simbolos disponibles:
+      {% for s in (ejemplo.simbolos if ejemplo else ['H', 'S', 'C']) %}
+        {{ s }}
+      {% endfor %}
+    </span>
+  </div>
+
+  <div id="resultado">
+    <h3 id="resultado-cadena"></h3>
+    <div class="result-grid" id="result-grid"></div>
+  </div>
+
+  {% if data.get('error') %}
+    <p style="color:#dc2626;font-weight:500">Error al conectar con el backend: {{ data.error }}</p>
+  {% else %}
+  <div class="automatas-grid">
+    {% for tipo, automata in [('afnd', data.afnd), ('afd', data.afd), ('afdMin', data.afdMinimizado)] %}
+    {% set etiqueta = {'afnd': 'AFND — Original', 'afd': 'AFD — Construcción de Subconjuntos', 'afdMin': 'AFD Minimizado'}[tipo] %}
+    {% set clase = {'afnd': 'afnd', 'afd': 'afd', 'afdMin': 'afdmin'}[tipo] %}
+
+    <div class="card {{ clase }}">
+      <div class="card-header">{{ etiqueta }}</div>
+      <div class="card-body">
+
+        <div class="quintupla">
+          <h4>Quíntupla formal &nbsp; M = (Q, Σ, δ, q₀, F)</h4>
+          <p><strong>Q =</strong> { {{ automata.estados | join(', ') }} }</p>
+          <p><strong>Σ =</strong> { {{ automata.alfabeto | join(', ') }}{% if tipo == 'afnd' %}, ε{% endif %} }</p>
+          <p><strong>q₀ =</strong> {{ automata.estadoInicial }}</p>
+          <p><strong>F =</strong> { {{ automata.estadosAceptacion | join(', ') }} }</p>
+        </div>
+
+        <div class="tabla-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Estado</th>
+                {% for s in automata.alfabeto %}<th>{{ s }}</th>{% endfor %}
+                {% if tipo == 'afnd' %}<th>ε</th>{% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for estado in automata.estados %}
+              <tr class="{% if estado in automata.estadosAceptacion %}acepta-row{% endif %} {% if estado == automata.estadoInicial %}inicial-row{% endif %}">
+                <td>{{ estado }}</td>
+                {% for simbolo in automata.alfabeto %}
+                  {% set clave = estado + '|' + simbolo %}
+                  <td>{{ automata.transiciones.get(clave, []) | join(', ') or '—' }}</td>
+                {% endfor %}
+                {% if tipo == 'afnd' %}
+                  {% set eps_clave = estado + '|ε' %}
+                  <td>{{ automata.transiciones.get(eps_clave, []) | join(', ') or '—' }}</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="diagrama" id="diagrama-{{ tipo }}"></div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</main>
+
+<script>
+  const DATA = {{ data | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/diagramas.js') }}"></script>
+
+</body>
+</html>
