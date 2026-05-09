@@ -5,6 +5,23 @@ Proyecto educativo con arquitectura en dos capas:
 - Backend: Spring Boot (Java 17) para construir y validar automatas.
 - Frontend: Flask (Python) para la interfaz web y consumo del backend.
 
+  <img width="1910" height="975" alt="image" src="https://github.com/user-attachments/assets/42be9538-f6ce-45ae-bf41-bf11f8ebec4b" />
+
+
+
+- AFD de IOT
+<img width="1910" height="975" alt="image" src="https://github.com/user-attachments/assets/a44568b2-9e1e-42f4-b975-66fa95735de2" />
+
+- AFD de IDS
+<img width="1910" height="975" alt="image" src="https://github.com/user-attachments/assets/e5feec26-412b-4763-800e-272f88b13203" />
+
+- AFD de E_comerce
+<img width="1910" height="975" alt="image" src="https://github.com/user-attachments/assets/bb5a6112-cfbf-43fe-9316-356a22613132" />
+
+
+
+
+
 ## Estructura
 
 - `backend/`: API y logica de automatas.
